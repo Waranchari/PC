@@ -21,11 +21,15 @@ def create_dashboard(data):
     # Group by category and calculate total quantity
     category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
 
+    # Set font for Thai characters
+    font_path = "/path/to/thai/font.ttf"  # Specify the path to a Thai font file
+    thai_font = fm.FontProperties(fname=font_path)
+
     # Plot bar chart
     st.subheader('จำนวนทั้งหมดตามหมวดหมู่')
     fig, ax = plt.subplots()
     sns.barplot(x='หมวดงาน', y='จำนวนที่รับเข้า', data=category_data, ax=ax)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=45, fontproperties=thai_font)  # Specify Thai font for x-axis labels
     st.pyplot(fig)
 
 # Main function to run the app
