@@ -50,13 +50,9 @@ def equipment_dashboard(data):  # Accept data as a parameter
         notes = st.text_area("หมายเหตุ")
         
         current_date = datetime.now().date()
-        current_time = datetime.now().time()
 
         # Date input with default value set to current date
         date_received = st.date_input("วันที่รับเข้า", value=current_date)
-
-        # Time input with default value set to current time
-        time_received = st.time_input("เวลา", value=current_time)
 
         # Create a submit button
         submitted = st.form_submit_button("Submit")
