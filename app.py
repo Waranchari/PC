@@ -44,7 +44,7 @@ def equipment_dashboard(data):  # Accept data as a parameter
     with st.form("equipment_form"):
         # Create a section for equipment information
         st.header("ข้อมูลรับเข้า")
-        equipment_name = st.selectbox("ชื่ออุปกรณ์", ["Choose something", "Option 1", "Option 2"])
+        equipment_name = st.selectbox("ชื่ออุปกรณ์", data['ชื่ออุปกรณ์'])
         quantity = st.number_input("จํานวน", value=0)
         received_by = st.text_input("ผู้รับเข้า")
         notes = st.text_area("หมายเหตุ")
