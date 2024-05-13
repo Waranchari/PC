@@ -64,10 +64,31 @@ def equipment_dashboard(data):  # Accept data as a parameter
     if submitted:
         st.write("Form submitted successfully!")
 
+def create_dashboard_1(data):
+    st.title("Inventory Dashboard")
+
+    # Set custom font using CSS
+    st.markdown(
+        """
+        <style>
+        /* Define your custom font */
+        .custom-font {
+            font-family: 'TH Sarabun New', sans-serif;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Display content with custom font
+    st.write("This text uses a custom font.", unsafe_allow_html=True)
+
+
 # Main function to run the app
 def main():
     # Load inventory data
     data = load_data()
+    create_dashboard_1(data)
 
     # Set up sidebar
     st.sidebar.title('การจัดการสินค้า')
