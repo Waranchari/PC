@@ -15,8 +15,9 @@ def save_data(data):
     # Save data to CSV file (replace 'inventory.csv' with your file path)
     data.to_csv('inventory.csv', index=False)
 
-# Function to create dashboard
-def create_dashboard(data):    
+plt.rcParams['font.family'] = 'Angsana New'
+
+def create_dashboard(data):
     st.title('แดชบอร์ดสินค้า')
 
     # Group by category and calculate total quantity
@@ -26,18 +27,14 @@ def create_dashboard(data):
     st.subheader('จำนวนทั้งหมดตามหมวดหมู่')
     fig, ax = plt.subplots()
 
-    # Set default font family to a font that supports Thai characters
-    plt.rcParams['font.family'] = 'Tahoma'
-
     sns.barplot(x='หมวดงาน', y='จำนวนที่รับเข้า', data=category_data, ax=ax)
     plt.xticks(rotation=45)
 
     # Set x and y axis labels
-    ax.set_xlabel(u'\u0E04\u0E2D\u0E32\u0E07\u0E21 (Category)')
-    ax.set_ylabel(u'\u0E14\u0E2D\u0E32\u0E44\u0E07\u0E15\u0E08\u0E22\u0E32\u0E40 (Total Quantity)')
+    ax.set_xlabel('หมวดงาน (Category)')
+    ax.set_ylabel('จำนวนที่รับเข้า (Total Quantity)')
 
     st.pyplot(fig)
-
 # Main function to run the app
 def main():
     # Load inventory data
