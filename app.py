@@ -42,7 +42,7 @@ def main():
 
 
 # Load data
-equipment_data = pd.read_csv('inventory.csv.csv')
+equipment_data = pd.read_csv('inventory.csv')
 
 # Create title
 st.title('Equipment Inventory Dashboard')
