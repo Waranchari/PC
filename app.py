@@ -9,6 +9,19 @@ def save_data(data):
     # Save data to CSV file (replace 'inventory.csv' with your file path)
     data.to_csv('inventory.csv', index=False)
 
+def create_dashboard(data):
+    st.title('Inventory Dashboard')
+
+    # Group by category and calculate total quantity
+    category_data = data.groupby('Category')['Quantity'].sum().reset_index()
+
+    # Plot bar chart
+    st.subheader('Total Quantity by Category')
+    fig, ax = plt.subplots()
+    sns.barplot(x='Category', y='Quantity', data=category_data, ax=ax)
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
+
 # Main function to run the app
 def main():
     # Load inventory data
@@ -16,12 +29,22 @@ def main():
 
     # Set up sidebar
     st.sidebar.title('Inventory Management')
-    page = st.sidebar.radio('Navigation', ['View Inventory', 'Add Item'])
+    page = st.sidebar.radio('Navigation', ['View Inventory', 'Add Item', 'Dashboard'])
 
     # View Inventory page
     if page == 'View Inventory':
         st.title('View Inventory')
-        st.write(data)
+
+        # Filter items by category
+        categories = data['Category'].unique().tolist()
+        selected_category = st.selectbox('Select Category', ['All'] + categories)
+        
+        if selected_category != 'All':
+            filtered_data = data[data['Category'] == selected_category]
+        else:
+            filtered_data = data
+
+        st.write(filtered_data)
 
     # Add Item page
     elif page == 'Add Item':
@@ -39,6 +62,17 @@ def main():
             # Save data
             save_data(data)
             st.success('Item added successfully!')
+
+    # Dashboard page
+    elif page == 'Dashboard':
+        create_dashboard(data)
+
+    # Show footer
+    st.sidebar.markdown('---')
+    st.sidebar.write('Built with Streamlit')
+
+if __name__ == '__main__':
+    main()
 
 if __name__ == '__main__':
     main()
