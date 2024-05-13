@@ -16,8 +16,7 @@ def save_data(data):
     data.to_csv('inventory.csv', index=False)
 
 # Function to create dashboard
-def create_dashboard(data):
-    st.title('แดชบอร์ดสินค้า')
+st.title('แดชบอร์ดสินค้า')
 
     # Group by category and calculate total quantity
     category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
@@ -31,6 +30,11 @@ def create_dashboard(data):
 
     sns.barplot(x='หมวดงาน', y='จำนวนที่รับเข้า', data=category_data, ax=ax)
     plt.xticks(rotation=45)
+
+    # Set x and y axis labels
+    ax.set_xlabel('หมวดงาน (Category)')
+    ax.set_ylabel('จำนวนที่รับเข้า (Total Quantity)')
+
     st.pyplot(fig)
 
 # Main function to run the app
