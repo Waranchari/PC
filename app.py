@@ -20,7 +20,7 @@ def create_dashboard(data):
     # Plot bar chart
     st.subheader('Total Quantity by Category')
     fig, ax = plt.subplots()
-    sns.barplot(x='หมวดงาน', y='จำนวนรับเข้า', data=category_data, ax=ax)
+    sns.barplot(x='หมวดงาน', y='จำนวนที่รับเข้า', data=category_data, ax=ax)
     plt.xticks(rotation=45)
     st.pyplot(fig)
 
