@@ -13,12 +13,12 @@ def create_dashboard(data):
     st.title('Inventory Dashboard')
 
     # Group by category and calculate total quantity
-    category_data = data.groupby('Category')['Quantity'].sum().reset_index()
+    category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
 
     # Plot bar chart
     st.subheader('Total Quantity by Category')
     fig, ax = plt.subplots()
-    sns.barplot(x='Category', y='Quantity', data=category_data, ax=ax)
+    sns.barplot(x='หมวดงาน', y='จำนวนรับเข้า', data=category_data, ax=ax)
     plt.xticks(rotation=45)
     st.pyplot(fig)
 
@@ -36,11 +36,11 @@ def main():
         st.title('View Inventory')
 
         # Filter items by category
-        categories = data['Category'].unique().tolist()
+        categories = data['หมวดงาน'].unique().tolist()
         selected_category = st.selectbox('Select Category', ['All'] + categories)
         
         if selected_category != 'All':
-            filtered_data = data[data['Category'] == selected_category]
+            filtered_data = data[data['หมวดงาน'] == selected_category]
         else:
             filtered_data = data
 
@@ -66,13 +66,6 @@ def main():
     # Dashboard page
     elif page == 'Dashboard':
         create_dashboard(data)
-
-    # Show footer
-    st.sidebar.markdown('---')
-    st.sidebar.write('Built with Streamlit')
-
-if __name__ == '__main__':
-    main()
 
 if __name__ == '__main__':
     main()
