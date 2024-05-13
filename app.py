@@ -23,7 +23,7 @@ def create_dashboard(data):
     category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
 
     # Set font for Thai characters
-    font_path = "/path/to/thai/font.ttf"  # Specify the path to a Thai font file
+    font_path = "/path/to/thai/THSarabunNew.ttf"  # Specify the path to a Thai font file
     thai_font = fm.FontProperties(fname=font_path)
 
     # Plot bar chart
