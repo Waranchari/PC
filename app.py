@@ -16,7 +16,8 @@ def save_data(data):
     data.to_csv('inventory.csv', index=False)
 
 # Function to create dashboard
-st.title('แดชบอร์ดสินค้า')
+def create_dashboard(data):    
+    st.title('แดชบอร์ดสินค้า')
 
     # Group by category and calculate total quantity
     category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
