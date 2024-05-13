@@ -31,7 +31,7 @@ def create_dashboard(data):
         xaxis_title='หมวดงาน (Category)',
         yaxis_title='จำนวนที่รับเข้า (Total Quantity)',
         font=dict(
-            family='Tahoma'
+            family='Angsana New'
         )
     )
     fig.update_xaxes(tickangle=45)
