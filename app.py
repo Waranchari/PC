@@ -1,85 +1,119 @@
-import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
+import streamlit as st
 
-# Function to load inventory data
-def load_data():
-    # Load data from CSV file (replace 'inventory.csv' with your file path)
-    data = pd.read_csv('inventory.csv')
-    return data
+# use whole page width
+st.set_page_config(page_title="My Streamlit App", layout="wide")
 
-# Function to save inventory data
-def save_data(data):
-    # Save data to CSV file (replace 'inventory.csv' with your file path)
-    data.to_csv('inventory.csv', index=False)
+# read csv file
+df = pd.read_csv("inventory.csv")
 
-plt.rcParams['font.family'] = 'Angsana New'
+# preparing check boxes for the dataframe
+df["selected"] = [False for i in range(df.shape[0])]
 
-def create_dashboard(data):
-    st.title('แดชบอร์ดสินค้า')
+list_sub_category = df["หมวดงาน"].sort_values().unique().tolist()
 
-    # Group by category and calculate total quantity
-    category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
+# le title
+st.header("Inventory Manager")
+st.divider()
 
-    # Plot bar chart using Plotly
-    st.subheader('จำนวนทั้งหมดตามหมวดหมู่')
-    fig = px.bar(category_data, x='หมวดงาน', y='จำนวนที่รับเข้า', title='จำนวนทั้งหมดตามหมวดหมู่')
-    fig.update_layout(
-        xaxis_title='หมวดงาน (Category)',
-        yaxis_title='จำนวนที่รับเข้า (Total Quantity)',
-        font=dict(
-            family='Angsana New'
-        )
-    )
-    fig.update_xaxes(tickangle=45)
+# defining dataframe we want to dynamically interact with and make changes to within streamlit session. 
+# declared once at the beginning, like this:
+if 'df' not in st.session_state:
+        st.session_state.df = pd.DataFrame(columns = df.columns)
+if 'full' not in st.session_state:
+        st.session_state.full = df.copy()
+# create page columns
+a1,a2,a3 = st.columns([.75,.25,2])
 
-    st.plotly_chart(fig)
-# Main function to run the app
-def main():
-    # Load inventory data
-    data = load_data()
+# first column's content
+with a1:
+    st.subheader("Add item to inventory")
 
-    # Set up sidebar
-    st.sidebar.title('การจัดการสินค้า')
-    page = st.sidebar.radio('การนำทาง', ['ดูสินค้า', 'เพิ่มสินค้า', 'แดชบอร์ด'])
+    # selecting sub-category before scrolling through product names
+    sub_category = st.selectbox("Select product category:", list_sub_category)
+    # retrieving list of recorded items in inventory
+    list_item = df["ชื่ออุปกรณ์"][df["หมวดงาน"] == sub_category].sort_values().unique().tolist()
 
-    # View Inventory page
-    if page == 'ดูสินค้า':
-        st.title('ดูสินค้า')
+    # to give an option to search items within all category names:
+    if st.toggle("Search in all category"):
+        list_item = df["ชื่ออุปกรณ์"].sort_values().unique().tolist()
+    
+    st.write("Num. of products in this category:",len(list_item))
+    st.write(" ")
+    st.write(" ")
+    # setting up a variable to save a product name that will be chosen by user during the interaction
+    name = ""
+    name = st.selectbox("Product Name:", list_item)
+    
+    # option to put a new item in the list if the product is not yet recorded in inventory list
+    if st.checkbox("Item not in the list."):
+        name = st.text_input("Product Name:")
+        name = name.title()
+    
+    # setting up variables to fill in other columns for each entry (row)
+    sel = False
+    product_id = df["product_id"][df["product_name"] == name].values[0]
+    category = df["category"][df["product_name"] == name].values[0]
+    sub_category = df["sub-category"][df["product_name"] == name].values[0]
+    quantity = st.text_input("Quantity:")
 
-        # Filter items by category
-        categories = data['หมวดงาน'].unique().tolist()
-        selected_category = st.selectbox('เลือกหมวดหมู่', ['ทั้งหมด'] + categories)
-        
-        if selected_category != 'ทั้งหมด':
-            filtered_data = data[data['หมวดงาน'] == selected_category]
-        else:
-            filtered_data = data
+    # check if the quantity is a number
+    q_isnumber = False
+    if quantity != "":
+        try:
+            quantity = float(quantity)
+            q_isnumber = True
+        except:
+            st.error("Quantity must be a number.")
 
-        st.write(filtered_data)
+    # preparing a button that records/appends the user input to the list/dataframe
+    if st.button("Add to cart") and q_isnumber == True:
+        st.session_state.df = st.session_state.df.append({
+        "selected":sel, 
+        "product_id":product_id,
+        "category":category,
+        "sub-category":sub_category,
+        "product_name":name, 
+        "quantity":quantity
+        }, ignore_index = True)
+        # pops a small notification on below-right
+        st.toast("Added to list.")
 
-    # Add Item page
-    elif page == 'เพิ่มสินค้า':
-        st.title('เพิ่มสินค้า')
-        # Get user input for new item details
-        name = st.text_input('ชื่อสินค้า')
-        quantity = st.number_input('จำนวน', min_value=0)
-        price = st.number_input('ราคา', min_value=0.0)
+with a3:
+    st.subheader("Items to be added")
+    # not sure why session state is declared again here lol
+    if 'df' not in st.session_state:
+        st.session_state.df = df.copy()
+    
+    # toggle button
+    if st.toggle("Show data"):
+        # to display the number of item in the list
+        st.write("Num. of entry:", st.session_state.df.shape[0])
+        st.session_state.df = st.data_editor(st.session_state.df.groupby(["selected","product_name","category","sub-category","product_id"]).agg({"quantity":"sum"}).reset_index(), 
+        column_config = {
+        "selected": st.column_config.CheckboxColumn("selected", default = False)
+        }, hide_index = True, use_container_width=True)
+        b1,b2,b3 = st.columns([1,1.5,1.5])
+        with b1:
+            if st.button("Delete selected"):
+                st.session_state.df = st.session_state.df[st.session_state.df["selected"] == False]
+                st.success("Data deleted.")
+        with b2:
+            if st.button("Delete all"):
+                cols = st.session_state.df.columns
+                st.session_state.df = pd.DataFrame(columns = cols)
+                st.success("Data deleted.")
+        with b3:
+            if st.button("Save changes to inventory data"):
+                for i,j in list(zip(st.session_state.df["product_name"],st.session_state.df["quantity"])):
+                    st.session_state.full["quantity"][st.session_state.full["product_name"] == i] += j
+                cols = st.session_state.df.columns
+                st.session_state.df = pd.DataFrame(columns = cols)
+                st.success("Inventory updated. Scroll down to see your inventory data.")
 
-        # Add button to add item to inventory
-        if st.button('เพิ่มสินค้า'):
-            # Append new item to data
-            new_item = {'ชื่อสินค้า': name, 'จำนวน': quantity, 'ราคา': price}
-            data = data.append(new_item, ignore_index=True)
-            # Save data
-            save_data(data)
-            st.success('เพิ่มสินค้าเรียบร้อยแล้ว!')
-
-    # Dashboard page
-    elif page == 'แดชบอร์ด':
-        create_dashboard(data)
-
-if __name__ == '__main__':
-    main()
+st.divider()
+b1,b2,b3 = st.columns([1,3,1])
+with b2:
+    search_sub_category = st.selectbox("Select category to display:", list_sub_category)
+    if st.toggle("Display data of selected category"):
+        st.dataframe(st.session_state.full[st.session_state.full["sub-category"] == search_sub_category])
