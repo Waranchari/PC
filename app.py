@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import seaborn as sns
+import plotly.express as px
 
 # Function to load inventory data
 def load_data():
@@ -23,18 +24,19 @@ def create_dashboard(data):
     # Group by category and calculate total quantity
     category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
 
-    # Plot bar chart
+    # Plot bar chart using Plotly
     st.subheader('จำนวนทั้งหมดตามหมวดหมู่')
-    fig, ax = plt.subplots()
+    fig = px.bar(category_data, x='หมวดงาน', y='จำนวนที่รับเข้า', title='จำนวนทั้งหมดตามหมวดหมู่')
+    fig.update_layout(
+        xaxis_title='หมวดงาน (Category)',
+        yaxis_title='จำนวนที่รับเข้า (Total Quantity)',
+        font=dict(
+            family='Tahoma'
+        )
+    )
+    fig.update_xaxes(tickangle=45)
 
-    sns.barplot(x='หมวดงาน', y='จำนวนที่รับเข้า', data=category_data, ax=ax)
-    plt.xticks(rotation=45)
-
-    # Set x and y axis labels
-    ax.set_xlabel('หมวดงาน (Category)')
-    ax.set_ylabel('จำนวนที่รับเข้า (Total Quantity)')
-
-    st.pyplot(fig)
+    st.plotly_chart(fig)
 # Main function to run the app
 def main():
     # Load inventory data
