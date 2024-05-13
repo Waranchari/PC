@@ -3,22 +3,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Function to load inventory data
 def load_data():
+    # Load data from CSV file (replace 'inventory.csv' with your file path)
     data = pd.read_csv('inventory.csv')
     return data
 
+# Function to save inventory data
 def save_data(data):
     # Save data to CSV file (replace 'inventory.csv' with your file path)
     data.to_csv('inventory.csv', index=False)
 
+# Function to create dashboard
 def create_dashboard(data):
-    st.title('Inventory Dashboard')
+    st.title('แดชบอร์ดสินค้า')
 
     # Group by category and calculate total quantity
     category_data = data.groupby('หมวดงาน')['จำนวนที่รับเข้า'].sum().reset_index()
 
     # Plot bar chart
-    st.subheader('Total Quantity by Category')
+    st.subheader('จำนวนทั้งหมดตามหมวดหมู่')
     fig, ax = plt.subplots()
     sns.barplot(x='หมวดงาน', y='จำนวนที่รับเข้า', data=category_data, ax=ax)
     plt.xticks(rotation=45)
@@ -30,18 +34,18 @@ def main():
     data = load_data()
 
     # Set up sidebar
-    st.sidebar.title('Inventory Management')
-    page = st.sidebar.radio('Navigation', ['View Inventory', 'Add Item', 'Dashboard'])
+    st.sidebar.title('การจัดการสินค้า')
+    page = st.sidebar.radio('การนำทาง', ['ดูสินค้า', 'เพิ่มสินค้า', 'แดชบอร์ด'])
 
     # View Inventory page
-    if page == 'View Inventory':
-        st.title('View Inventory')
+    if page == 'ดูสินค้า':
+        st.title('ดูสินค้า')
 
         # Filter items by category
         categories = data['หมวดงาน'].unique().tolist()
-        selected_category = st.selectbox('Select Category', ['All'] + categories)
+        selected_category = st.selectbox('เลือกหมวดหมู่', ['ทั้งหมด'] + categories)
         
-        if selected_category != 'All':
+        if selected_category != 'ทั้งหมด':
             filtered_data = data[data['หมวดงาน'] == selected_category]
         else:
             filtered_data = data
@@ -49,24 +53,24 @@ def main():
         st.write(filtered_data)
 
     # Add Item page
-    elif page == 'Add Item':
-        st.title('Add Item')
+    elif page == 'เพิ่มสินค้า':
+        st.title('เพิ่มสินค้า')
         # Get user input for new item details
-        name = st.text_input('Name')
-        quantity = st.number_input('Quantity', min_value=0)
-        price = st.number_input('Price', min_value=0.0)
+        name = st.text_input('ชื่อสินค้า')
+        quantity = st.number_input('จำนวน', min_value=0)
+        price = st.number_input('ราคา', min_value=0.0)
 
         # Add button to add item to inventory
-        if st.button('Add Item'):
+        if st.button('เพิ่มสินค้า'):
             # Append new item to data
-            new_item = {'Name': name, 'Quantity': quantity, 'Price': price}
+            new_item = {'ชื่อสินค้า': name, 'จำนวน': quantity, 'ราคา': price}
             data = data.append(new_item, ignore_index=True)
             # Save data
             save_data(data)
-            st.success('Item added successfully!')
+            st.success('เพิ่มสินค้าเรียบร้อยแล้ว!')
 
     # Dashboard page
-    elif page == 'Dashboard':
+    elif page == 'แดชบอร์ด':
         create_dashboard(data)
 
 if __name__ == '__main__':
