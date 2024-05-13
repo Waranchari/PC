@@ -36,7 +36,7 @@ def create_dashboard(data):
 
     st.plotly_chart(fig)
 
-def equipment_dashboard():
+def equipment_dashboard(data):  # Accept data as a parameter
     # Create a dashboard title
     st.title("ประวัติการรับเข้า")
 
@@ -67,7 +67,7 @@ def equipment_dashboard():
     # Display a message if the form is submitted
     if submitted:
         st.write("Form submitted successfully!")
-            
+
 # Main function to run the app
 def main():
     # Load inventory data
@@ -114,7 +114,7 @@ def main():
         create_dashboard(data)
         
     elif page == 'ประวัติการรับเข้า':
-        equipment_dashboard(data)
+        equipment_dashboard(data)  # Pass data to equipment_dashboard function
 
 if __name__ == '__main__':
     main()
