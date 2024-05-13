@@ -33,8 +33,8 @@ def create_dashboard(data):
     plt.xticks(rotation=45)
 
     # Set x and y axis labels
-    ax.set_xlabel('หมวดงาน (Category)')
-    ax.set_ylabel('จำนวนที่รับเข้า (Total Quantity)')
+    ax.set_xlabel(u'\u0E04\u0E2D\u0E32\u0E07\u0E21 (Category)')
+    ax.set_ylabel(u'\u0E14\u0E2D\u0E32\u0E44\u0E07\u0E15\u0E08\u0E22\u0E32\u0E40 (Total Quantity)')
 
     st.pyplot(fig)
 
