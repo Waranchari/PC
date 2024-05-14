@@ -7,7 +7,7 @@ add_page_title("Inventory Management")
 # should be
 show_pages(
     [
-        Page("example_app/streamlit_app.py", "Home", "🏠"),
+        Page("page_1.py", "Home", "🏠"),
         # Can use :<icon-name>: or the actual icon
         Page("example_app/example_one.py", "Example One", ":books:"),
         # The pages appear in the order you pass them
